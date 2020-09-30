@@ -2,6 +2,7 @@
 #include "config.h"
 #include "disk_lib.h"
 #include "mmc_lib.h"
+#include "uart.h"
 #include "fat.h"
 
 #include <util/delay.h>
@@ -39,11 +40,10 @@ static uint8_t send_cmd(void)
 		spi_send_byte(0xFF);
 		
 		result = SPDR;
-		
 		if ((result & 0x80) == 0)
 			break;
 	}
-	
+
 	return(result); // TimeOut !
 }
 

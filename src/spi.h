@@ -30,6 +30,40 @@
 #ifndef SPI_H
 #define SPI_H
 
+/* SPI */
+#if defined __AVR_ATmega32__ || defined __AVR_ATmega644__ || defined __AVR_ATmega644P__ || defined __AVR_ATmega1284P__
+
+#  define SPI_PORT PORTB
+#  define SPI_DDR  DDRB
+#  define SPI_SS   _BV(PB4)
+#  define SPI_MOSI _BV(PB5)
+#  define SPI_MISO _BV(PB6)
+#  define SPI_SCK  _BV(PB7)
+
+#elif defined __AVR_ATmega128__ || defined __AVR_ATmega1281__ || defined __AVR_ATmega2561__
+
+#  define SPI_PORT PORTB
+#  define SPI_DDR  DDRB
+#  define SPI_SS   _BV(PB0)
+#  define SPI_SCK  _BV(PB1)
+#  define SPI_MOSI _BV(PB2)
+#  define SPI_MISO _BV(PB3)
+
+#elif defined __AVR_ATmega8__ || defined __AVR_ATmega48__ || defined __AVR_ATmega168__ || defined __AVR_ATmega328__
+
+#  define SPI_PORT PORTB
+#  define SPI_DDR  DDRB
+#  define SPI_SS   _BV(PB2)
+#  define SPI_MOSI _BV(PB3)
+#  define SPI_MISO _BV(PB4)
+#  define SPI_SCK  _BV(PB5)
+
+#else
+#  error Unknown chip!
+#endif
+
+#define SPI_MASK (SPI_SS|SPI_MOSI|SPI_MISO|SPI_SCK)
+
 // function prototypes
 
 // SPI interface initializer

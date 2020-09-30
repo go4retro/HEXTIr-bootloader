@@ -6,7 +6,6 @@
 #include <avr/pgmspace.h>
 #include <util/crc16.h>
 #include "config.h"
-#include "avrcompat.h"
 #include "fat.h"
 #include "uart.h"
 
@@ -44,7 +43,7 @@ static inline uint16_t crc_flash(void) {
   uint16_t flash_crc;
 
   for (adr=0,flash_crc = 0xFFFF; adr<FLASHEND - BOOTLDRSIZE + 1; adr++)
-    flash_crc = _crc_ccitt_update(flash_crc, PGM_READ_BYTE(adr));
+    flash_crc = _crc_ccitt_update(flash_crc, pgm_read_byte(adr));
 
   return flash_crc;
 }
@@ -112,9 +111,11 @@ static inline void check_file(void)
     current_bootldrinfo.crc == file_bootldrinfo->crc)
     return;
 
+# ifdef CONFIG_FILE_CRC_CHECK
   // check CRC of file
   if(crc_file() != 0)
     return;
+# endif
 
   current_bootldrinfo.app_version = file_bootldrinfo->app_version;
   updatecluster = filestart;
@@ -141,18 +142,20 @@ static inline void flash_update(void)
 
     for (i=0; i<(512 / SPM_PAGESIZE); i++)
     {
-	  uart_putc('.'); // flash a block
+	    uart_putc('.'); // flash a block
       adr = (filesector * 512UL) + i * SPM_PAGESIZE;
       boot_page_erase(adr);
       while (boot_rww_busy())
         boot_rww_enable();
 
-      for (j=0; j<SPM_PAGESIZE; j+=2)
+      for (j=0; j<SPM_PAGESIZE; j+=2) {
         boot_page_fill(adr + j, *lpword++);
+      }
 
       boot_page_write(adr);
       while (boot_rww_busy())
         boot_rww_enable();
+
     }
   }
   uart_putcrlf();
@@ -172,7 +175,7 @@ int main(void)
   uint8_t res;
   uint16_t i;
 
-  init_serial();
+  uart_init();
   //LED On
 # ifdef USE_FLASH_LED
   FLASH_LED_DDR |= 1<<FLASH_LED_PIN;
@@ -232,7 +235,6 @@ int main(void)
     if (updatecluster)
       flash_update();
   }
-
 # ifdef CONFIG_FLASH_CRC_CHECK
   if(crc_flash() == 0)  {
     //Led off
@@ -245,6 +247,6 @@ int main(void)
 //  while (1);
 # endif
 
-  uart_putc('G'); // go APP
+    uart_putc('G'); // go APP
     app_start();
 }

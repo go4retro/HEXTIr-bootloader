@@ -41,13 +41,25 @@
 
 //Port & Pin definitions. Be sure to use a pin of the same port as SPI for CS (Chip Select) !
 //Settings below are recommended for a MEGA16/MEGA32
+#if defined __AVR_ATmega16__ || defined  __AVR_ATmega32__
+
 #define MMC_PORT PORTB
 #define MMC_DDR DDRB
 
-#define SPI_MISO	PB6		//DataOut of MMC 
-#define SPI_MOSI	PB5		//DataIn of  MMC
-#define SPI_CLK  	PB7		//Clock of MMC
-#define MMC_CS		PB4		//ChipSelect of MMC
+#define SPI_MISO  PB6   //DataOut of MMC
+#define SPI_MOSI  PB5   //DataIn of  MMC
+#define SPI_CLK   PB7   //Clock of MMC
+#define MMC_CS    PB4   //ChipSelect of MMC
+#else
+#define MMC_PORT  PORTB
+#define MMC_DDR   DDRB
+
+#define SPI_MISO  PIN4    //DataOut of MMC
+#define SPI_MOSI  PIN3    //DataIn of  MMC
+#define SPI_CLK   PIN5    //Clock of MMC
+#define MMC_CS    PIN2    //ChipSelect of MMC
+
+#endif
 
 //Clockrate while initialisation / reading / writing
 #define SPI_INIT_CLOCK 1<<SPR1 | 1<<SPR0

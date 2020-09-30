@@ -72,10 +72,26 @@ ifeq ($(MCU),atmega32)
   LFUSE = 0xfc
   BOOTLOADERSTARTADR = 0x7800
   BOOTLDRSIZE = 0x0800
+else ifeq ($(MCU),atmega328)
+  EFUSE = 0xfd
+  HFUSE = 0xd0
+  LFUSE = 0xdf
+#  BOOTLOADERSTARTADR = 0x7800
+#  BOOTLDRSIZE = 0x0800
+  BOOTLOADERSTARTADR = 0x7600
+  BOOTLDRSIZE = 0x0a00
+else ifeq ($(MCU),atmega328p)
+  EFUSE = 0xfd
+  HFUSE = 0xd0
+  LFUSE = 0xdf
+#  BOOTLOADERSTARTADR = 0x7800
+#  BOOTLDRSIZE = 0x0800
+  BOOTLOADERSTARTADR = 0x7600
+  BOOTLDRSIZE = 0x0a00
 else ifeq ($(MCU),atmega644)
   EFUSE = 0xfd
   HFUSE = 0x92
-  LFUSE = 0xfc
+  LFUSE = 0xff
   BOOTLOADERSTARTADR = 0xf000
   BOOTLDRSIZE = 0x1000
 else ifeq ($(MCU),atmega644p)
@@ -128,10 +144,7 @@ TARGET = $(CONFIG_BOOT_NAME)
 # List C source files here. (C dependencies are automatically generated.)
 SRC = main.c fat.c
 
-# uIEC needs the ATA module, all others use SD (for now)
-ifeq ($(CONFIG_HARDWARE_VARIANT),4)
-  SRC += ata.c
-else ifeq ($(CONFIG_NEW_SDLIB),y)
+ifeq ($(CONFIG_NEW_SDLIB),y)
   SRC += sdcard.c spi.c crc7.c
 else
 #Older MMC libraries

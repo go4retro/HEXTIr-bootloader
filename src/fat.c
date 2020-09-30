@@ -2,6 +2,7 @@
 #include <string.h>
 #include "disk_lib.h"
 #include "config.h"
+#include "uart.h"
 #include "fat.h"
 
 uint8_t fat_buf[512];
@@ -26,7 +27,6 @@ uint8_t fat_init(void)
 	
 	for (i=0; (i<INIT_RETRIES) && (init != 0); i++)
 		init = disk_initialize();
-	
 	if (init != DISK_OK)
 		return ERR_INIT;
 		
